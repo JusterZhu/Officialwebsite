@@ -2,7 +2,7 @@
 
 TSLH Official Website is a high-end enterprise homepage built with the Next.js App Router. It uses bilingual markdown content, a cinematic scroll-driven PNG frame sequence, GSAP animations, Lenis smooth scrolling, and Tailwind CSS.
 
-<img width="1920" height="1080" alt="Screenshot (250)" src="https://github.com/user-attachments/assets/3ceb8b9c-525f-4a2b-b1b5-8b81a4e0b5fc" />
+
 
 ---
 
