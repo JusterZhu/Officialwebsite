@@ -26,13 +26,13 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "GT America Expanded Bold";
+  font-family: "GT America Expanded Bold", Arial, Helvetica, sans-serif;
 }
 
 .regular {
-  font-family: "GT America Extended Regular";
+  font-family: "GT America Extended Regular", Arial, Helvetica, sans-serif;
 }
 
 .extended {
-  font-family: "GT America Extended Bold";
+  font-family: "GT America Extended Bold", Arial, Helvetica, sans-serif;
 }

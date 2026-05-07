@@ -234,6 +234,15 @@ const SmoothScrollHero = ({ content }) => {
             <FloatingButton label={labels.inquiry} />
 
             <div ref={mainContainer} className="relative h-screen overflow-hidden bg-black">
+                <Image
+                    src={frameSrc(0)}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    priority
+                    unoptimized
+                    aria-hidden="true"
+                />
                 <canvas ref={canvasRef} className="absolute inset-0 h-full w-full will-change-transform" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.58)_100%)]" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/78" />
