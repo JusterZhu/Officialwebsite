@@ -293,7 +293,11 @@ const SmoothScrollHero = ({ content }) => {
                 <canvas ref={canvasRef} className="absolute inset-0 h-full w-full will-change-transform" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.58)_100%)]" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/78" />
-                <div className="pixel-meteor-layer" aria-hidden="true" />
+                <div className="pixel-meteor-layer" aria-hidden="true">
+                    {Array.from({ length: 8 }, (_, index) => (
+                        <span key={index} />
+                    ))}
+                </div>
 
                 <div className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none">
                     <div
