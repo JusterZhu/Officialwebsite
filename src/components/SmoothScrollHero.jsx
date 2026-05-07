@@ -70,13 +70,14 @@ function CorporateSection({ section, index }) {
 const SmoothScrollHero = ({ content }) => {
     const [locale, setLocale] = useState("en");
     const canvasRef = useRef(null);
-    const scopeRef = useRef(null);
+    const animationScopeRef = useRef(null);
     const mainContainer = useRef(null);
     const heroCopyRef = useRef(null);
     const introRef = useRef(null);
     const logoRef = useRef(null);
     const imageCache = useRef(new Map());
-    const frame = useRef({ value: 0 });
+    const currentFrame = useRef({ value: 0 });
+    const drawFrameRef = useRef(() => { });
 
     const activeContent = content[locale];
     const labels = activeContent.labels;
@@ -152,7 +153,7 @@ const SmoothScrollHero = ({ content }) => {
             }
         };
 
-        window.__drawEnterpriseFrame = loadFrame;
+        drawFrameRef.current = loadFrame;
         sizeCanvas();
         loadFrame(0);
 
@@ -161,7 +162,7 @@ const SmoothScrollHero = ({ content }) => {
         return () => {
             cancelled = true;
             window.removeEventListener("resize", sizeCanvas);
-            delete window.__drawEnterpriseFrame;
+            drawFrameRef.current = () => { };
         };
     }, []);
 
@@ -177,12 +178,12 @@ const SmoothScrollHero = ({ content }) => {
             },
         });
 
-        tl.to(frame.current, {
+        tl.to(currentFrame.current, {
             value: frameCount - 1,
             snap: "value",
             ease: "none",
             duration: 10,
-            onUpdate: () => window.__drawEnterpriseFrame?.(frame.current.value),
+            onUpdate: () => drawFrameRef.current(currentFrame.current.value),
         }, 0)
             .to(canvasRef.current, {
                 scale: 1.08,
@@ -226,10 +227,10 @@ const SmoothScrollHero = ({ content }) => {
                 },
             );
         });
-    }, { scope: scopeRef });
+    }, { scope: animationScopeRef });
 
     return (
-        <div ref={scopeRef} className="relative min-h-screen bg-[#050608] text-white">
+        <div ref={animationScopeRef} className="relative min-h-screen bg-[#050608] text-white">
             <Navbar navLinks={labels.nav} currentLocale={locale} onLocaleChange={setLocale} />
             <FloatingButton label={labels.inquiry} />
 
