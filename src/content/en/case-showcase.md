@@ -1,12 +1,12 @@
 ---
 eyebrow: Case Showcase
-title: Proven delivery for demanding enterprise scenarios
-summary: Case stories highlight industry challenges, solution paths, and measurable outcomes with a premium editorial layout.
-metrics: Manufacturing Upgrade|Global Launch|Digital Transformation|Brand Renewal
+title: Software upgrade scenarios across industries
+summary: Our solutions support customers in automotive, government, internet, chemical, and industrial control sectors, proving their value in complex deployment environments.
+metrics: Automotive|Government|Internet|Chemical and industrial control
 ---
-### Selected Cases
-Each case is structured to communicate credibility quickly while preserving enough white space for a high-end brand tone.
+### Industry Support
+For customers with frequent version iterations, complex deployment environments, and diverse endpoints, TSLH Technology provides full-process support from platform setup to continuous operations.
 
-- Smart factory launch campaign with sequence-frame product reveal
-- Cross-border industrial group website redesign and localization
-- Enterprise culture and partner ecosystem presentation platform
+- Automotive: version upgrade management for client tools, production support systems, and multi-end applications
+- Government and domestic IT: stable, secure, and auditable upgrade processes for localized environments
+- Internet and industrial customers: rapid iteration, scheduled push, package management, and plugin update operations

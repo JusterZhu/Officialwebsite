@@ -1,12 +1,13 @@
 ---
-eyebrow: Product Showcase
-title: Product center built for high-value industrial assets
-summary: Present complex solutions with cinematic visuals, structured parameters, and immersive product narratives.
-metrics: Smart Equipment|Energy Systems|Digital Platforms|Premium Services
+eyebrow: Product Center
+title: GeneralUpdate and GeneralSpacestation
+summary: Our product center supports the enterprise software lifecycle with automatic upgrades, one-stop build and release, differential patch packaging, package management, and push delivery.
+metrics: GeneralUpdate|GeneralSpacestation|Automated release|Extension plugin update management
+image: spacestation
 ---
-### Featured Solutions
-The product center supports high-definition visual assets and concise business storytelling, making it easy to replace content as the brand evolves.
+### Featured Products
+Built around “Unlimited Updates, Boundless Upgrades,” our product capabilities make every step from code to user endpoint more automated, reliable, and traceable.
 
-- Intelligent manufacturing equipment and production-line systems
-- Industrial IoT, data platforms, and enterprise intelligence dashboards
-- Clean energy, materials, and advanced engineering solutions
+- [GeneralUpdate](https://www.justerzhu.cn): enterprise automatic upgrade capabilities for version detection, incremental updates, upgrade policies, and client update experiences. Documentation: https://www.justerzhu.cn/docs/category/doc
+- [GeneralSpacestation](https://www.bilibili.com/video/BV12P9dBiEEh): one-stop solution for automated code pulling, build and release, differential patch packaging, package management, push, and scheduled push
+- Support for domestic IT environments, extension plugin update management, and multi-product software upgrade operations

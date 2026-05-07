@@ -37,11 +37,11 @@ src/
 ├── lib/            # Markdown/content loading utilities
 └── components/     # Reusable UI components
     ├── SmoothScrollHero.jsx
-    ├── HeroContent.jsx
+    ├── FloatingButton.jsx
     └── Navbar.jsx
 
 frames/             # PNG sequence served by /frames/[frame]
-public/             # Static assets served directly by Next.js
+src/assets/images/  # Homepage image assets
 ```
 
 ---
