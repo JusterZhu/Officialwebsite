@@ -68,7 +68,6 @@ body {
     inset 0 0 0 2px rgba(255, 255, 255, 0.18),
     0 0 12px rgba(128, 213, 255, 0.34);
   filter: drop-shadow(0 0 8px rgba(128, 213, 255, 0.3));
-  image-rendering: pixelated;
   transform: translate3d(0, 0, 0) rotate(-28deg);
   animation: raindrop-meteor-shower var(--meteor-duration) ease-in-out infinite;
   animation-delay: var(--meteor-delay);
