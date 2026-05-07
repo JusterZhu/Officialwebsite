@@ -56,20 +56,45 @@ body {
   width: var(--meteor-width);
   height: var(--meteor-height);
   opacity: var(--meteor-opacity);
-  border: 1px solid rgba(221, 247, 255, 0.58);
-  border-radius: 64% 46% 46% 68% / 70% 48% 52% 74%;
+  border: 1px solid rgba(221, 247, 255, 0.7);
   background:
-    radial-gradient(ellipse at 22% 64%, rgba(255, 255, 255, 0.82) 0 16%, rgba(166, 226, 255, 0.68) 35%, rgba(95, 187, 255, 0.24) 55%, transparent 74%),
-    linear-gradient(28deg, rgba(255, 255, 255, 0.72) 0%, rgba(128, 211, 255, 0.46) 44%, rgba(128, 211, 255, 0.12) 72%, transparent 100%);
-  clip-path: polygon(0 52%, 10% 28%, 30% 15%, 68% 22%, 100% 50%, 68% 78%, 30% 87%, 10% 76%);
+    linear-gradient(32deg, rgba(255, 255, 255, 0.88) 0 18%, rgba(132, 214, 255, 0.66) 18% 45%, rgba(72, 158, 255, 0.32) 45% 70%, transparent 70% 100%),
+    repeating-conic-gradient(from 45deg, rgba(255, 255, 255, 0.88) 0 25%, rgba(111, 202, 255, 0.72) 0 50%, rgba(255, 255, 255, 0.28) 0 75%, rgba(69, 159, 255, 0.38) 0 100%);
+  background-size: 100% 100%, 12px 12px;
+  background-blend-mode: screen;
+  clip-path: polygon(0 48%, 9% 25%, 22% 14%, 43% 14%, 43% 22%, 62% 22%, 62% 32%, 82% 32%, 100% 50%, 82% 68%, 62% 68%, 62% 78%, 43% 78%, 43% 86%, 22% 86%, 9% 75%, 0 58%);
   box-shadow:
-    inset 0 0 8px rgba(255, 255, 255, 0.24),
-    0 0 14px rgba(128, 213, 255, 0.26);
-  filter: drop-shadow(0 0 8px rgba(128, 213, 255, 0.24));
+    inset 0 0 0 2px rgba(255, 255, 255, 0.18),
+    0 0 12px rgba(128, 213, 255, 0.34);
+  filter: drop-shadow(0 0 8px rgba(128, 213, 255, 0.3));
+  image-rendering: pixelated;
   transform: translate3d(0, 0, 0) rotate(-28deg);
   animation: raindrop-meteor-shower var(--meteor-duration) ease-in-out infinite;
   animation-delay: var(--meteor-delay);
   will-change: transform, opacity;
+}
+
+.pixel-meteor-layer span::before,
+.pixel-meteor-layer span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: inherit;
+  pointer-events: none;
+}
+
+.pixel-meteor-layer span::before {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 10px, rgba(0, 0, 0, 0.26) 10px 12px),
+    repeating-linear-gradient(0deg, transparent 0 10px, rgba(0, 0, 0, 0.24) 10px 12px);
+  mix-blend-mode: multiply;
+}
+
+.pixel-meteor-layer span::after {
+  background:
+    linear-gradient(32deg, rgba(255, 255, 255, 0.72) 0 16%, transparent 16% 100%),
+    linear-gradient(32deg, transparent 0 48%, rgba(255, 255, 255, 0.32) 48% 58%, transparent 58% 100%);
+  opacity: 0.78;
 }
 
 .pixel-meteor-layer span:nth-child(1) {
