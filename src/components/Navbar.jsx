@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import NavItem from "./NavbarItem";
 import Image from "next/image";
-import skyightLogo from "@/assets/images/logo.svg";
+import tslhLogo from "@/assets/images/tslhlogo.png";
 
 const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { } }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,19 +18,19 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
         }
     }, [isOpen]);
 
-    const contactLinks = [
-        { text: "+86 400 800 2026", href: "tel:+864008002026" },
-        { text: "inquiry@tslh-enterprise.com", href: "mailto:inquiry@tslh-enterprise.com" },
-    ];
-
     return (
         <>
             <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 lg:px-16 py-7 text-[10px] z-[100] pointer-events-none">
                 {/* Desktop Left - Hidden below LG */}
-                <div className="hidden lg:flex items-center gap-2 xl:gap-4 tracking-tight pointer-events-auto">
-                    {navLinks.map((link) => (
-                        <NavItem key={link[0]} text={link[0]} href={link[1]} />
-                    ))}
+                <div className="hidden lg:flex items-center gap-5 tracking-tight pointer-events-auto">
+                    <a href="#" aria-label="TSLH AI" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 p-1.5 backdrop-blur-md">
+                        <Image src={tslhLogo} alt="TSLH AI" width={36} height={36} className="h-full w-full object-contain" priority />
+                    </a>
+                    <div className="flex items-center gap-2 xl:gap-4">
+                        {navLinks.map((link) => (
+                            <NavItem key={link[0]} text={link[0]} href={link[1]} />
+                        ))}
+                    </div>
                 </div>
 
                 {/* Empty space in middle for the animated logo to land */}
@@ -38,10 +38,7 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
 
                 {/* Desktop Right - Hidden below LG */}
                 <div className="hidden lg:flex items-center gap-2 tracking-tight pointer-events-auto">
-                    {contactLinks.map((link) => (
-                        <NavItem key={link.text} text={link.text} href={link.href} />
-                    ))}
-                    <div className="ml-2 flex rounded-full border border-white/15 bg-black/20 p-1 text-white backdrop-blur-md">
+                    <div className="flex rounded-full border border-white/15 bg-black/20 p-1 text-white backdrop-blur-md">
                         {["en", "zh"].map((locale) => (
                             <button
                                 key={locale}
@@ -56,7 +53,10 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
                 </div>
 
                 {/* Mobile Menu Icon - Only visible below LG at the right corner */}
-                <div className="lg:hidden flex w-full justify-end pointer-events-auto">
+                <div className="lg:hidden flex w-full items-center justify-between pointer-events-auto">
+                    <a href="#" aria-label="TSLH AI" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 p-1.5 backdrop-blur-md">
+                        <Image src={tslhLogo} alt="TSLH AI" width={36} height={36} className="h-full w-full object-contain" priority />
+                    </a>
                     <button
                         onClick={() => setIsOpen(true)}
                         className="text-white p-2 hover:bg-white/10 rounded-sm transition-all duration-300 cursor-pointer"
@@ -84,10 +84,11 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
                     {/* Sidebar Header: Logo & Close Icon */}
                     <div className="flex items-center justify-between mb-20">
                         <Image
-                            src={skyightLogo}
-                            alt="Logo"
-                            width={120}
-                            className="brightness-0 invert"
+                            src={tslhLogo}
+                            alt="TSLH AI"
+                            width={44}
+                            height={44}
+                            className="h-11 w-11 object-contain"
                         />
                         <button
                             onClick={() => setIsOpen(false)}
@@ -99,7 +100,7 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
 
                     {/* Sidebar Menu Items */}
                     <div className="flex flex-col gap-4 items-start">
-                        {[...navLinks.map(([text, href]) => ({ text, href })), ...contactLinks].map((link) => (
+                        {navLinks.map(([text, href]) => ({ text, href })).map((link) => (
                             <div key={link.text} className="text-base" onClick={() => setIsOpen(false)}>
                                 <NavItem text={link.text} href={link.href} />
                             </div>

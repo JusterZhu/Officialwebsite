@@ -6,23 +6,21 @@ const sectionOrder = [
   "core-business",
   "product-showcase",
   "case-showcase",
-  "corporate-culture",
-  "partners",
   "contact",
 ];
 
 const labels = {
   en: {
-    heroKicker: "High-End Enterprise Official Website",
-    heroTitle: "Intelligent industry, cinematic presence.",
+    heroKicker: "Unlimited Updates, Boundless Upgrades.",
+    heroTitle: "Software solutions that keep enterprise systems moving.",
     heroSubtitle:
-      "A light-luxury corporate homepage driven by frame-by-frame scroll animation, built for technology enterprises, industrial groups, and premium brands.",
+      "TSLH AI delivers automatic upgrade platforms and custom software engineering for enterprise, industrial, and public-sector scenarios.",
     intro:
-      "Scroll to drive the sequence. Every frame is pinned, eased, and composed for an immersive enterprise brand reveal.",
+      "Unlimited Updates, Boundless Upgrades. Build once, evolve continuously, and let every release reach users with confidence.",
     scroll: "SCROLL DOWN",
-    journey: "TO START THE JOURNEY",
-    inquiry: "Online Inquiry",
-    footer: "© 2026 TSLH Enterprise. Built for future-facing industry.",
+    journey: "UPDATE WITHOUT BOUNDARIES",
+    inquiry: "Contact TSLH AI",
+    footer: "©2025 - 2026 TSLH Technology. Unlimited Updates, Boundless Upgrades.",
     nav: [
       ["About", "#about"],
       ["Business", "#core-business"],
@@ -32,15 +30,15 @@ const labels = {
     ],
   },
   zh: {
-    heroKicker: "高端企业官网",
-    heroTitle: "以智能产业，呈现电影级品牌气场。",
+    heroKicker: "更新无限，升级无界。",
+    heroTitle: "让企业级软件持续、安全、稳定地进化。",
     heroSubtitle:
-      "面向科技企业、工业集团与高端品牌的轻奢企业首页，以序列帧滚动构建沉浸式主视觉。",
-    intro: "滚动驱动画面序列。固定视差、缓动与留白共同完成企业品牌揭幕。",
+      "TSLH AI 聚焦企业级自动升级与软件外包开发，为工业、政企与互联网客户构建可持续演进的软件解决方案。",
+    intro: "更新无限，升级无界。一次构建，持续进化，让每次发布都精准、可靠、可追踪。",
     scroll: "向下滚动",
-    journey: "开启品牌旅程",
-    inquiry: "在线咨询",
-    footer: "© 2026 TSLH Enterprise. 面向未来产业而生。",
+    journey: "开启无界升级",
+    inquiry: "联系 TSLH AI",
+    footer: "©2025 - 2026 TSLH Technology. Unlimited Updates, Boundless Upgrades.",
     nav: [
       ["关于我们", "#about"],
       ["核心业务", "#core-business"],

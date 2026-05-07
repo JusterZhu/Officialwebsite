@@ -1,12 +1,13 @@
 ---
 eyebrow: Contact Us
-title: Start an online inquiry for your next enterprise project
-summary: Tell us about your brand, product, or digital transformation goal. Our team will respond with a focused solution path.
-metrics: inquiry@tslh-enterprise.com|+86 400 800 2026|Shanghai · Shenzhen · Global
+title: Start the next upgrade with TSLH AI
+summary: If you are planning an automatic upgrade platform, software outsourcing project, or domestic IT adaptation, contact us by email or WeChat.
+metrics: official@tslhai.com|WeChat tslhkj|Wuhan · Shanghai
+image: bowl
 ---
-### Online Inquiry
-Use this section for future form integration. Current content is markdown-driven and can be updated by replacing the file.
+### Contact
+We will review your business scenario, deployment environment, release process, and maintenance goals, then provide a clear communication path and initial solution suggestions.
 
-- Corporate website design and development inquiries
-- Product CG, sequence frames, and cinematic visual planning
-- Multilingual content, partner, and case showcase updates
+- Email: official@tslhai.com
+- WeChat: tslhkj
+- Base: Wuhan · Shanghai

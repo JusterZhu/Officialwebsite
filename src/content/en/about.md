@@ -1,12 +1,13 @@
 ---
 eyebrow: About Us
-title: Technology-driven enterprise brand operator
-summary: We integrate strategy, design, intelligent manufacturing, and digital delivery to help enterprise clients build future-facing industrial value.
-metrics: 18+ Years of industry experience|120+ Enterprise projects delivered|30+ Global partner regions
+title: Software solutions provider
+summary: TSLH Technology turns “Unlimited Updates, Boundless Upgrades” into practical software solutions that can be delivered, operated, and continuously improved.
+metrics: Automatic upgrade systems|Software engineering delivery|Long-term technical support
+image: juster
 ---
-### Brand Vision
-TSLH focuses on high-end enterprise transformation, connecting advanced technology with dependable operations. We use precise systems, premium visual language, and long-term service thinking to create trustworthy corporate influence.
+### Who We Are
+We focus on enterprise software planning, development, and upgrade capability building. By combining product engineering, automated release workflows, package management, and industry delivery experience, we help clients lower iteration costs and improve software lifecycle quality.
 
-- Strategic planning for medium and large enterprise brands
-- Digital experience systems for industrial and technology groups
-- Full-cycle delivery from concept, product, case, to service touchpoint
+- Software solutions provider for enterprise, government, and industrial customers
+- Focused on stability, security, maintainability, and domestic IT ecosystem compatibility
+- Long-term collaboration from requirements and development to launch and operations

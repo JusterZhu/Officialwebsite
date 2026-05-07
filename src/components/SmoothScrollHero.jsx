@@ -7,7 +7,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown } from "lucide-react";
 
-import skyightLogo from "@/assets/images/logo.svg";
+import justerImage from "@/assets/images/juster.png";
+import spacestationImage from "@/assets/images/sapcestation.png";
+import bowlImage from "@/assets/images/bowl.png";
 import FloatingButton from "./FloatingButton";
 import Navbar from "./Navbar";
 
@@ -15,6 +17,37 @@ gsap.registerPlugin(ScrollTrigger);
 
 const frameCount = 460;
 const frameSrc = (index) => `/frames/${String(index + 1).padStart(3, "0")}.png`;
+const sectionImages = {
+    juster: justerImage,
+    spacestation: spacestationImage,
+    bowl: bowlImage,
+};
+
+function RichText({ text }) {
+    const parts = [];
+    const linkPattern = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = linkPattern.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+            parts.push(text.slice(lastIndex, match.index));
+        }
+
+        parts.push(
+            <a key={`${match[1]}-${match.index}`} href={match[2]} target="_blank" rel="noreferrer" className="text-white underline underline-offset-4 transition hover:text-white/75">
+                {match[1]}
+            </a>,
+        );
+        lastIndex = linkPattern.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+        parts.push(text.slice(lastIndex));
+    }
+
+    return parts;
+}
 
 function MarkdownBlocks({ blocks }) {
     return (
@@ -28,19 +61,21 @@ function MarkdownBlocks({ blocks }) {
                     return (
                         <ul key={index} className="grid gap-3 md:grid-cols-2">
                             {block.items.map((item) => (
-                                <li key={item} className="border-l border-white/20 pl-4 text-white/72">{item}</li>
+                                <li key={item} className="border-l border-white/20 pl-4 text-white/72"><RichText text={item} /></li>
                             ))}
                         </ul>
                     );
                 }
 
-                return <p key={index}>{block.text}</p>;
+                return <p key={index}><RichText text={block.text} /></p>;
             })}
         </div>
     );
 }
 
 function CorporateSection({ section, index }) {
+    const sectionImage = sectionImages[section.image];
+
     return (
         <section id={section.id} className="corporate-section relative overflow-hidden border-t border-white/10 px-6 py-24 sm:px-10 lg:px-16 lg:py-32">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.08),transparent_32rem)] opacity-60" />
@@ -48,6 +83,11 @@ function CorporateSection({ section, index }) {
                 <div>
                     <p className="mb-8 text-[10px] uppercase tracking-[0.45em] text-white/45">0{index + 1} / {section.eyebrow}</p>
                     <h2 className="max-w-2xl text-4xl leading-tight text-white md:text-6xl">{section.title}</h2>
+                    {sectionImage && (
+                        <div className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/30">
+                            <Image src={sectionImage} alt={section.title} className="h-auto w-full object-cover" />
+                        </div>
+                    )}
                 </div>
                 <div className="space-y-10">
                     <p className="text-xl leading-9 text-white/80 regular">{section.summary}</p>
@@ -249,14 +289,11 @@ const SmoothScrollHero = ({ content }) => {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/78" />
 
                 <div className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none">
-                    <div className="w-[176px] sm:w-[220px] lg:w-[250px]">
-                        <Image
-                            ref={logoRef}
-                            src={skyightLogo}
-                            alt="TSLH Enterprise"
-                            className="h-auto w-full object-contain brightness-0 invert"
-                            priority
-                        />
+                    <div
+                        ref={logoRef}
+                        className="text-center text-4xl font-semibold tracking-[0.28em] text-white drop-shadow-2xl sm:text-6xl lg:text-7xl"
+                    >
+                        TSLH AI
                     </div>
                 </div>
 
