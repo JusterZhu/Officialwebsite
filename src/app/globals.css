@@ -57,6 +57,7 @@ body {
   height: var(--meteor-height);
   opacity: var(--meteor-opacity);
   border: 1px solid rgba(221, 247, 255, 0.7);
+  background-color: rgba(132, 214, 255, 0.42);
   background:
     linear-gradient(32deg, rgba(255, 255, 255, 0.88) 0 18%, rgba(132, 214, 255, 0.66) 18% 45%, rgba(72, 158, 255, 0.32) 45% 70%, transparent 70% 100%),
     repeating-conic-gradient(from 45deg, rgba(255, 255, 255, 0.88) 0 25%, rgba(111, 202, 255, 0.72) 0 50%, rgba(255, 255, 255, 0.28) 0 75%, rgba(69, 159, 255, 0.38) 0 100%);
