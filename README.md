@@ -65,6 +65,7 @@ public/             # Static assets served directly by Next.js
    ```bash
    npm ci
    ```
+   `npm ci` installs the exact dependency versions from `package-lock.json`, which keeps local, CI, and production builds reproducible.
 
 3. **Run the development server for local development**:
    ```bash
@@ -105,4 +106,3 @@ The project has no required environment variables. The `engines` field in `packa
 - **Scroll Pinning**: The main hero section uses GSAP `pin` to hold the view while internal animations (like scaling the "window") occur.
 - **GSAP Context**: Uses `@gsap/react` for safe cleaning of animations in React's development mode.
 - **Z-Index Strategy**: Specific layering in `SmoothScrollHero.jsx` ensures the logo remains interactive while the "sky" moves behind it.
-
