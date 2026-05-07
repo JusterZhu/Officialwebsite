@@ -6,7 +6,7 @@ import NavItem from "./NavbarItem";
 import Image from "next/image";
 import skyightLogo from "@/assets/images/logo.svg";
 
-const Navbar = () => {
+const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { } }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     // Prevent scrolling when sidebar is open
@@ -18,25 +18,18 @@ const Navbar = () => {
         }
     }, [isOpen]);
 
-    const navLinks = [
-        { text: "About", href: "#" },
-        { text: "Our Fleet", href: "#" },
-        { text: "Advantages", href: "#" },
-        { text: "Global", href: "#" },
-    ];
-
     const contactLinks = [
-        { text: "+971 54 432 5050", href: "tel:+971544325050" },
-        { text: "info@jeskojets.com", href: "mailto:info@jeskojets.com" },
+        { text: "+86 400 800 2026", href: "tel:+864008002026" },
+        { text: "inquiry@tslh-enterprise.com", href: "mailto:inquiry@tslh-enterprise.com" },
     ];
 
     return (
         <>
-            <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-10 lg:px-20 py-8 text-[10px] z-[100] pointer-events-none">
+            <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 lg:px-16 py-7 text-[10px] z-[100] pointer-events-none">
                 {/* Desktop Left - Hidden below LG */}
-                <div className="hidden lg:flex items-center gap-4 tracking-tight pointer-events-auto">
+                <div className="hidden lg:flex items-center gap-2 xl:gap-4 tracking-tight pointer-events-auto">
                     {navLinks.map((link) => (
-                        <NavItem key={link.text} text={link.text} />
+                        <NavItem key={link[0]} text={link[0]} href={link[1]} />
                     ))}
                 </div>
 
@@ -44,10 +37,22 @@ const Navbar = () => {
                 <div className="w-[150px] hidden lg:block" />
 
                 {/* Desktop Right - Hidden below LG */}
-                <div className="hidden lg:flex items-center gap-4 tracking-tight pointer-events-auto">
+                <div className="hidden lg:flex items-center gap-2 tracking-tight pointer-events-auto">
                     {contactLinks.map((link) => (
-                        <NavItem key={link.text} text={link.text} />
+                        <NavItem key={link.text} text={link.text} href={link.href} />
                     ))}
+                    <div className="ml-2 flex rounded-full border border-white/15 bg-black/20 p-1 text-white backdrop-blur-md">
+                        {["en", "zh"].map((locale) => (
+                            <button
+                                key={locale}
+                                type="button"
+                                onClick={() => onLocaleChange(locale)}
+                                className={`rounded-full px-3 py-1 uppercase transition ${currentLocale === locale ? "bg-white text-black" : "text-white/65 hover:text-white"}`}
+                            >
+                                {locale === "en" ? "EN" : "中文"}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Mobile Menu Icon - Only visible below LG at the right corner */}
@@ -94,11 +99,26 @@ const Navbar = () => {
 
                     {/* Sidebar Menu Items */}
                     <div className="flex flex-col gap-4 items-start">
-                        {[...navLinks, ...contactLinks].map((link) => (
+                        {[...navLinks.map(([text, href]) => ({ text, href })), ...contactLinks].map((link) => (
                             <div key={link.text} className="text-base" onClick={() => setIsOpen(false)}>
-                                <NavItem text={link.text} />
+                                <NavItem text={link.text} href={link.href} />
                             </div>
                         ))}
+                        <div className="mt-8 flex rounded-full border border-white/15 p-1 text-xs text-white">
+                            {["en", "zh"].map((locale) => (
+                                <button
+                                    key={locale}
+                                    type="button"
+                                    onClick={() => {
+                                        onLocaleChange(locale);
+                                        setIsOpen(false);
+                                    }}
+                                    className={`rounded-full px-4 py-2 uppercase ${currentLocale === locale ? "bg-white text-black" : "text-white/60"}`}
+                                >
+                                    {locale === "en" ? "EN" : "中文"}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

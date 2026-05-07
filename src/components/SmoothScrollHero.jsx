@@ -1,45 +1,168 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from 'react';
-import Image from 'next/image';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ChevronDown } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ChevronDown } from "lucide-react";
 
-import innerImage from "@/assets/images/innerImage.webp";
-import outerImage from "@/assets/images/outerImage.webp";
-import shadowImage from "@/assets/images/shadowImage.webp";
-import skyImage from "@/assets/images/skyImage.webp";
-import cloudsImage from "@/assets/images/cloudsImage.webp";
-import aboveImage from "@/assets/images/aboveImage.webp";
 import skyightLogo from "@/assets/images/logo.svg";
-import About from './About';
-import Navbar from './Navbar';
+import FloatingButton from "./FloatingButton";
+import Navbar from "./Navbar";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SmoothScrollHero = () => {
+const frameCount = 460;
+const frameSrc = (index) => `/frames/${String(index + 1).padStart(3, "0")}.png`;
+
+function MarkdownBlocks({ blocks }) {
+    return (
+        <div className="space-y-5 text-sm leading-7 text-white/68 regular">
+            {blocks.map((block, index) => {
+                if (block.type === "heading") {
+                    return <h3 key={index} className="pt-2 text-lg text-white extended">{block.text}</h3>;
+                }
+
+                if (block.type === "list") {
+                    return (
+                        <ul key={index} className="grid gap-3 md:grid-cols-2">
+                            {block.items.map((item) => (
+                                <li key={item} className="border-l border-white/20 pl-4 text-white/72">{item}</li>
+                            ))}
+                        </ul>
+                    );
+                }
+
+                return <p key={index}>{block.text}</p>;
+            })}
+        </div>
+    );
+}
+
+function CorporateSection({ section, index }) {
+    return (
+        <section id={section.id} className="corporate-section relative overflow-hidden border-t border-white/10 px-6 py-24 sm:px-10 lg:px-16 lg:py-32">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.08),transparent_32rem)] opacity-60" />
+            <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+                <div>
+                    <p className="mb-8 text-[10px] uppercase tracking-[0.45em] text-white/45">0{index + 1} / {section.eyebrow}</p>
+                    <h2 className="max-w-2xl text-4xl leading-tight text-white md:text-6xl">{section.title}</h2>
+                </div>
+                <div className="space-y-10">
+                    <p className="text-xl leading-9 text-white/80 regular">{section.summary}</p>
+                    {Array.isArray(section.metrics) && (
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            {section.metrics.map((metric) => (
+                                <div key={metric} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 text-sm text-white/78 backdrop-blur-md">
+                                    {metric}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <MarkdownBlocks blocks={section.blocks} />
+                </div>
+            </div>
+        </section>
+    );
+}
+
+const SmoothScrollHero = ({ content }) => {
+    const [locale, setLocale] = useState("en");
+    const canvasRef = useRef(null);
     const scopeRef = useRef(null);
     const mainContainer = useRef(null);
-    const windowRef = useRef(null);
-    const contentRef = useRef(null);
+    const heroCopyRef = useRef(null);
+    const introRef = useRef(null);
     const logoRef = useRef(null);
-    const secondSectionRef = useRef(null);
-    const cloudsRef = useRef(null);
-    const revealRef = useRef(null);
+    const imageCache = useRef(new Map());
+    const frame = useRef({ value: 0 });
 
-    // Initial Reveal Effect: Logo shows instantly, rest follows after 1s
+    const activeContent = content[locale];
+    const labels = activeContent.labels;
+
+    const firstFrames = useMemo(
+        () => Array.from({ length: 18 }, (_, index) => frameSrc(index)),
+        [],
+    );
+
     useEffect(() => {
-        const timer = setTimeout(() => {
-            gsap.to(revealRef.current, {
-                opacity: 1,
-                duration: 1.5,
-                ease: "power2.out"
-            });
-        }, 1000); // 1 second delay where ONLY the logo is visible
+        firstFrames.forEach((src) => {
+            const image = new window.Image();
+            image.src = src;
+        });
+    }, [firstFrames]);
 
-        return () => clearTimeout(timer);
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas?.getContext("2d");
+        if (!canvas || !context) return;
+
+        let cancelled = false;
+        let currentRequest = 0;
+
+        const sizeCanvas = () => {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+            context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+
+        const drawImage = (image) => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+            const x = (width - image.naturalWidth * scale) / 2;
+            const y = (height - image.naturalHeight * scale) / 2;
+
+            context.clearRect(0, 0, width, height);
+            context.drawImage(image, x, y, image.naturalWidth * scale, image.naturalHeight * scale);
+        };
+
+        const loadFrame = (index) => {
+            const normalized = Math.min(frameCount - 1, Math.max(0, Math.round(index)));
+            const cached = imageCache.current.get(normalized);
+
+            if (cached?.complete) {
+                drawImage(cached);
+                return;
+            }
+
+            const request = ++currentRequest;
+            const image = cached || new window.Image();
+            image.decoding = "async";
+            image.src = frameSrc(normalized);
+            imageCache.current.set(normalized, image);
+
+            image.onload = () => {
+                if (!cancelled && request === currentRequest) {
+                    drawImage(image);
+                }
+            };
+
+            for (let next = normalized + 1; next <= Math.min(frameCount - 1, normalized + 5); next += 1) {
+                if (!imageCache.current.has(next)) {
+                    const preload = new window.Image();
+                    preload.decoding = "async";
+                    preload.src = frameSrc(next);
+                    imageCache.current.set(next, preload);
+                }
+            }
+        };
+
+        window.__drawEnterpriseFrame = loadFrame;
+        sizeCanvas();
+        loadFrame(0);
+
+        window.addEventListener("resize", sizeCanvas);
+
+        return () => {
+            cancelled = true;
+            window.removeEventListener("resize", sizeCanvas);
+            delete window.__drawEnterpriseFrame;
+        };
     }, []);
 
     useGSAP(() => {
@@ -47,189 +170,131 @@ const SmoothScrollHero = () => {
             scrollTrigger: {
                 trigger: mainContainer.current,
                 start: "top top",
-                end: "+=250%",
+                end: "+=420%",
                 scrub: 1,
                 pin: true,
                 anticipatePin: 1,
-            }
+            },
         });
 
-        tl.to(windowRef.current, {
-            scale: 5,
-            rotation: 0.01,
-            force3D: true,
+        tl.to(frame.current, {
+            value: frameCount - 1,
+            snap: "value",
+            ease: "none",
             duration: 10,
-            ease: "power2.in"
+            onUpdate: () => window.__drawEnterpriseFrame?.(frame.current.value),
         }, 0)
-            .to(contentRef.current, {
-                scale: 5,
-                opacity: 0,
-                duration: 8,
-                ease: "power2.in"
+            .to(canvasRef.current, {
+                scale: 1.08,
+                duration: 10,
+                ease: "power2.inOut",
             }, 0)
-            .to(".scroll-indicator", { opacity: 0, duration: 1 }, 0);
-
-        const logoMoveFactor = window.innerWidth < 1024 ? 0.43 : 0.44;
-
-        tl.to(logoRef.current, {
-            y: -window.innerHeight * logoMoveFactor,
-            scale: 0.6,
-            duration: 8,
-            ease: "power2.inOut"
-        }, 1.5);
-
-        tl.fromTo(secondSectionRef.current,
-            {
+            .to(heroCopyRef.current, {
+                y: -90,
                 opacity: 0,
-                y: 150,
-                scale: 0.85,
-                filter: "blur(10px)"
-            },
-            {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                filter: "blur(0px)",
+                scale: 0.94,
+                duration: 4,
+                ease: "power2.in",
+            }, 1)
+            .to(".scroll-indicator", { opacity: 0, duration: 1 }, 0)
+            .to(logoRef.current, {
+                y: -window.innerHeight * 0.43,
+                scale: 0.62,
                 duration: 7,
-                ease: "power3.out"
-            },
-            9
-        );
+                ease: "power2.inOut",
+            }, 1.5)
+            .fromTo(introRef.current,
+                { opacity: 0, y: 130, scale: 0.9, filter: "blur(12px)" },
+                { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 6, ease: "power3.out" },
+                5,
+            );
 
-        gsap.fromTo(
-            cloudsRef.current,
-            { xPercent: 0 },
-            {
-                xPercent: -50,
-                duration: 30,
-                repeat: -1,
-                ease: "none",
-            }
-        );
-
+        gsap.utils.toArray(".corporate-section").forEach((section) => {
+            gsap.fromTo(section,
+                { y: 80, opacity: 0.55 },
+                {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 82%",
+                        end: "top 45%",
+                        scrub: 1,
+                    },
+                },
+            );
+        });
     }, { scope: scopeRef });
 
     return (
-        <div ref={scopeRef} className="relative">
-            {/* 1. Logo and Navbar are visible instantly */}
-            <Navbar />
+        <div ref={scopeRef} className="relative min-h-screen bg-[#050608] text-white">
+            <Navbar navLinks={labels.nav} currentLocale={locale} onLocaleChange={setLocale} />
+            <FloatingButton label={labels.inquiry} />
 
-            <div className="fixed inset-0 flex items-center justify-center z-[200] pointer-events-none">
-                <div className="w-[200px] sm:w-[220px] lg:w-[250px]">
-                    <Image
-                        ref={logoRef}
-                        src={skyightLogo}
-                        alt="Skyight Logo"
-                        className="w-full h-auto object-contain ml-1"
-                        priority
-                    />
+            <div ref={mainContainer} className="relative h-screen overflow-hidden bg-black">
+                <canvas ref={canvasRef} className="absolute inset-0 h-full w-full will-change-transform" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.58)_100%)]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/78" />
+
+                <div className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none">
+                    <div className="w-[176px] sm:w-[220px] lg:w-[250px]">
+                        <Image
+                            ref={logoRef}
+                            src={skyightLogo}
+                            alt="TSLH Enterprise"
+                            className="h-auto w-full object-contain brightness-0 invert"
+                            priority
+                        />
+                    </div>
                 </div>
-                {/* <h1 className='text-4xl ml-1'>Jesko Jets</h1> */}
+
+                <div ref={heroCopyRef} className="absolute inset-0 z-20 flex items-end px-6 pb-28 sm:px-10 lg:px-16 lg:pb-24">
+                    <div className="grid w-full items-end gap-8 lg:grid-cols-[1fr_0.75fr]">
+                        <div>
+                            <p className="mb-6 text-[10px] uppercase tracking-[0.55em] text-white/55">{labels.heroKicker}</p>
+                            <h1 className="max-w-5xl text-5xl leading-none tracking-tight sm:text-7xl lg:text-[112px]">
+                                {labels.heroTitle}
+                            </h1>
+                        </div>
+                        <p className="max-w-xl justify-self-end text-base leading-8 text-white/72 regular lg:text-right">
+                            {labels.heroSubtitle}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="scroll-indicator absolute bottom-10 right-6 z-20 w-[calc(100%-3rem)] max-w-md text-white sm:right-10 lg:right-16">
+                    <div className="mb-4 h-px w-full bg-white/70" />
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-[9px] font-bold tracking-tight">
+                            <div className="flex flex-col -space-y-2">
+                                <ChevronDown size={15} />
+                                <ChevronDown size={15} className="-mt-[11px]" />
+                                <ChevronDown size={15} className="-mt-[11px]" />
+                            </div>
+                            <span>{labels.scroll}</span>
+                        </div>
+                        <p className="text-[9px] tracking-tight text-white/72">{labels.journey}</p>
+                    </div>
+                </div>
+
+                <div ref={introRef} className="absolute inset-0 z-30 flex items-center px-6 opacity-0 sm:px-10 lg:px-16">
+                    <h2 className="max-w-6xl text-3xl leading-tight text-white sm:text-5xl lg:text-[64px]">
+                        {labels.intro}
+                    </h2>
+                </div>
             </div>
 
-            {/* 2. Content is hidden by default with inline style to prevent "sky flash" */}
-            <div ref={revealRef} style={{ opacity: 0 }}>
-                <div className="fixed inset-0 -z-50" style={{ transform: 'translate3d(0,0,0)' }}>
-                    <Image
-                        src={skyImage}
-                        alt="sky"
-                        fill
-                        className="object-cover object-bottom"
-                        priority
-                        quality={100}
-                        unoptimized
-                    />
-                </div>
+            <main className="relative z-10 bg-[#050608]">
+                {activeContent.sections.map((section, index) => (
+                    <CorporateSection key={section.id} section={section} index={index} />
+                ))}
+            </main>
 
-                <div className="fixed inset-0 -z-40 overflow-hidden pointer-events-none">
-                    <div
-                        ref={cloudsRef}
-                        className="absolute inset-0 h-full w-[1500%] sm:w-[500%]"
-                        style={{
-                            backgroundImage: `url(${cloudsImage.src})`,
-                            backgroundSize: '50% 100%', // Each "tile" is 100% of screen width
-                            backgroundRepeat: 'repeat-x',
-                            opacity: 0.6,
-                            willChange: 'transform',
-                            transform: 'translate3d(0,0,0)'
-                        }}
-                    />
-                </div>
-
-                <div ref={mainContainer} className="relative w-full h-screen overflow-hidden">
-                    <div ref={windowRef} className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none will-change-transform" style={{ perspective: '1000px', backfaceVisibility: 'hidden' }}>
-                        <div className="relative w-full h-full" style={{ transformStyle: 'preserve-3d' }}>
-                            <Image
-                                src={innerImage}
-                                alt="inner"
-                                fill
-                                className="object-cover scale-100 lg:scale-[1.3] z-10"
-                                quality={100}
-                                style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
-                                unoptimized
-                            />
-                            <Image
-                                src={shadowImage}
-                                alt="shadow"
-                                fill
-                                className="object-cover scale-100 lg:scale-[1.3] opacity-50 z-20"
-                                quality={100}
-                                style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
-                                unoptimized
-                            />
-                            <Image
-                                src={outerImage}
-                                alt="outer"
-                                fill
-                                className="object-cover scale-100 lg:scale-[1.3] z-30"
-                                quality={100}
-                                style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
-                                unoptimized
-                            />
-                            <div className="absolute top-[22.5%] left-[50%] md:top-[10%] md:left-[50.3%] -translate-x-1/2 w-[50%] md:w-[24%] h-auto z-10">
-                                <Image src={aboveImage} alt="above fixture" width={400} height={200} className="object-contain" quality={100} unoptimized />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div ref={contentRef} className="absolute inset-0 z-20 flex items-center justify-between px-20 text-white pointer-events-none">
-                        <div className="hero-text-left max-w-md">
-                            <h1 className="text-4xl md:text-5xl lg:text-[66px] leading-6 sm:leading-10 md:leading-12 lg:leading-14 tracking-tight font-bold -mt-64 lg:-mt-0 -ml-10 sm:-ml-0 -mr-10 sm:-mt-40 lg:pt-10">We are<br />movement</h1>
-                            <div className="mt-20 space-y-4 lg:block hidden">
-                                <h2 className="text-base sm:text-lg leading-5 font-medium">Your<br />freedom to<br />enjoy life</h2>
-                                <p className="w-10 h-px bg-white" />
-                                <p className="md:text-[10px] lg:text-[11px] font-semibold leading-4 max-w-[300px]">Every flight is designed around your comfort, time, and ambitions.</p>
-                            </div>
-                        </div>
-                        <div className="hero-text-right max-w-md flex flex-col items-end">
-                            <h1 className="text-4xl md:text-5xl lg:text-[60px] font-bold leading-6 sm:leading-10 md:leading-12 lg:leading-14 text-right mt-96 sm:mt-0 mr-88 sm:mr-0 md:pt-60 lg:pt-20">We are<br />distinction</h1>
-                        </div>
-                    </div>
-
-                    <div className="scroll-indicator absolute bottom-20 right-20 z-20 text-white md:w-[30%] lg:w-[25%]">
-                        <div className="mb-4 h-[1px] w-full bg-white" />
-                        <div className="hidden sm:flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-[8px] lg:text-[9px] font-bold tracking-tight">
-                                <div className="flex flex-col -space-y-2">
-                                    <ChevronDown size={15} />
-                                    <ChevronDown size={15} className='-mt-[11px]' />
-                                    <ChevronDown size={15} className='-mt-[11px]' />
-                                </div>
-                                <span>SCROLL DOWN</span>
-                            </div>
-                            <p className='text-[8px] lg:text-[9px] tracking-tight'>TO START THE JOURNEY</p>
-                        </div>
-                    </div>
-
-                    <div ref={secondSectionRef} className="absolute inset-0 z-30 flex flex-col items-center justify-center text-left text-white px-4 sm:px-8 md:px-10 pointer-events-none opacity-0">
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[45px] w-full sm:max-w-6xl leading-8 sm:leading-10 md:leading-12 lg:leading-14">
-                            <span className="font-bold tracking-tight">Jesko Jets®</span> is a private aviation operator with over 5,000 missions completed across 150+ countries. From international executives to global industries, our clients trust us to deliver on time, every time.
-                        </h2>
-                    </div>
-                </div>
-
-                <About />
-            </div>
+            <footer className="border-t border-white/10 bg-black px-6 py-10 text-center text-xs uppercase tracking-[0.35em] text-white/45">
+                {labels.footer}
+            </footer>
         </div>
     );
 };
