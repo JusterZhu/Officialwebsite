@@ -39,3 +39,62 @@ body {
 .extended {
   font-family: var(--font-enterprise-bold);
 }
+
+.pixel-meteor-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.pixel-meteor-layer::before,
+.pixel-meteor-layer::after {
+  content: "";
+  position: absolute;
+  top: -18vh;
+  right: -22vw;
+  width: 18rem;
+  height: 4rem;
+  opacity: 0.72;
+  transform: translate3d(0, 0, 0) rotate(-45deg);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 10px, rgba(255, 255, 255, 0.92) 10px 18px, rgba(110, 198, 255, 0.72) 18px 28px, transparent 28px 42px),
+    repeating-linear-gradient(0deg, transparent 0 8px, rgba(255, 255, 255, 0.36) 8px 14px, transparent 14px 24px);
+  clip-path: polygon(0 38%, 78% 38%, 78% 18%, 100% 50%, 78% 82%, 78% 62%, 0 62%);
+  filter: drop-shadow(0 0 16px rgba(128, 213, 255, 0.45));
+  image-rendering: pixelated;
+  animation: pixel-meteor-shower 6s linear infinite;
+}
+
+.pixel-meteor-layer::before {
+  box-shadow:
+    18vw -8vh 0 -0.75rem rgba(140, 215, 255, 0.42),
+    38vw 10vh 0 -0.55rem rgba(255, 255, 255, 0.34),
+    58vw -16vh 0 -0.95rem rgba(140, 215, 255, 0.38);
+}
+
+.pixel-meteor-layer::after {
+  top: -10vh;
+  right: -36vw;
+  width: 13rem;
+  height: 3rem;
+  opacity: 0.5;
+  animation-delay: -2.4s;
+  animation-duration: 8s;
+  box-shadow:
+    24vw 12vh 0 -0.6rem rgba(255, 255, 255, 0.32),
+    46vw -10vh 0 -0.8rem rgba(140, 215, 255, 0.36),
+    66vw 8vh 0 -0.7rem rgba(255, 255, 255, 0.28);
+}
+
+@keyframes pixel-meteor-shower {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-45deg);
+  }
+
+  to {
+    transform: translate3d(-125vw, 125vh, 0) rotate(-45deg);
+  }
+}
