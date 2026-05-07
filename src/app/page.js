@@ -1,11 +1,10 @@
-import Home from "@/app/Home/Home"
+import { getHomepageContent } from "@/lib/content";
 import SmoothScrollHero from "@/components/SmoothScrollHero";
 
 export default function Page() {
+  const content = getHomepageContent();
+
   return (
-    <div>
-      {/* <Home /> */}
-      <SmoothScrollHero />
-    </div>
+    <SmoothScrollHero content={content} />
   );
 }

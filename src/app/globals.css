@@ -7,6 +7,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-enterprise-sans: "GT America Expanded Bold", Arial, Helvetica, sans-serif;
+  --font-enterprise-regular: "GT America Extended Regular", Arial, Helvetica, sans-serif;
+  --font-enterprise-bold: "GT America Extended Bold", Arial, Helvetica, sans-serif;
 }
 
 @theme inline {
@@ -26,13 +29,13 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "GT America Expanded Bold";
+  font-family: var(--font-enterprise-sans);
 }
 
 .regular {
-  font-family: "GT America Extended Regular";
+  font-family: var(--font-enterprise-regular);
 }
 
 .extended {
-  font-family: "GT America Extended Bold";
+  font-family: var(--font-enterprise-bold);
 }
