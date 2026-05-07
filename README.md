@@ -42,6 +42,7 @@ src/
 
 frames/             # PNG sequence served by /frames/[frame]
 src/assets/images/  # Homepage image assets
+web.config.json     # Web host and port configuration for development/production startup
 ```
 
 ---
@@ -50,7 +51,7 @@ src/assets/images/  # Homepage image assets
 
 ### Prerequisites
 
-- Node.js 20.9.0 or newer
+- Node.js 20.19.0 or newer
 - npm 10 or newer
 
 ### Installation
@@ -67,13 +68,23 @@ src/assets/images/  # Homepage image assets
    ```
    `npm ci` installs the exact dependency versions from `package-lock.json`, which keeps local, CI, and production builds reproducible.
 
-3. **Run the development server for local development**:
+3. **Configure the web address and port**:
+   Edit `web.config.json` before starting the website:
+   ```json
+   {
+     "host": "0.0.0.0",
+     "port": 3000
+   }
+   ```
+   Use `host` as the server bind address. Keep `0.0.0.0` for server deployment, or use `127.0.0.1` for local-only access. Change `port` to the port you want to open.
+
+4. **Run the development server for local development**:
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**:
-   Navigate to `http://localhost:3000` to see the results.
+5. **Open your browser**:
+   Navigate to `http://localhost:3000` when using the default port, or replace `3000` with the port configured in `web.config.json`.
 
 ### Production Build and Launch
 
@@ -85,7 +96,7 @@ npm run build
 npm run start
 ```
 
-Then open `http://localhost:3000`. In production, keep the `frames/` directory beside `package.json` because the `/frames/[frame]` route reads PNG frames from that path at runtime.
+Then open `http://<server-ip>:<port>` using the port configured in `web.config.json`. In production, keep the `frames/` directory beside `package.json` because the `/frames/[frame]` route reads PNG frames from that path at runtime.
 
 ### Release and Startup Checks
 
@@ -97,7 +108,7 @@ npm run build
 npm audit
 ```
 
-The project has no required environment variables. The `engines` field in `package.json` documents the Node.js version required by Next.js, and dependencies are pinned/overridden to patched versions to avoid known release-time audit findings.
+The project reads the web bind address and port from `web.config.json`. The `engines` field in `package.json` documents the Node.js version required by Next.js, and dependencies are pinned/overridden to patched versions to avoid known release-time audit findings.
 
 ---
 
