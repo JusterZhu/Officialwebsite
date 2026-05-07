@@ -23,7 +23,7 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
             <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 lg:px-16 py-7 text-[10px] z-[100] pointer-events-none">
                 {/* Desktop Left - Hidden below LG */}
                 <div className="hidden lg:flex items-center gap-5 tracking-tight pointer-events-auto">
-                    <a href="#" aria-label="TSLH AI" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 p-1.5 backdrop-blur-md">
+                    <a href="#" aria-label="TSLH AI" className="flex h-12 w-12 items-center justify-center bg-white/10 p-1.5 backdrop-blur-md">
                         <Image src={tslhLogo} alt="TSLH AI" width={36} height={36} className="h-full w-full object-contain" priority />
                     </a>
                     <div className="flex items-center gap-2 xl:gap-4">
@@ -54,7 +54,7 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
 
                 {/* Mobile Menu Icon - Only visible below LG at the right corner */}
                 <div className="lg:hidden flex w-full items-center justify-between pointer-events-auto">
-                    <a href="#" aria-label="TSLH AI" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 p-1.5 backdrop-blur-md">
+                    <a href="#" aria-label="TSLH AI" className="flex h-12 w-12 items-center justify-center bg-white/10 p-1.5 backdrop-blur-md">
                         <Image src={tslhLogo} alt="TSLH AI" width={36} height={36} className="h-full w-full object-contain" priority />
                     </a>
                     <button

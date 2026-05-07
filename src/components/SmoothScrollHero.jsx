@@ -75,6 +75,9 @@ function MarkdownBlocks({ blocks }) {
 
 function CorporateSection({ section, index }) {
     const sectionImage = sectionImages[section.image];
+    const headingSize = section.id === "product-showcase"
+        ? "max-w-xl break-words text-3xl leading-tight text-white md:text-5xl"
+        : "max-w-2xl text-4xl leading-tight text-white md:text-6xl";
 
     return (
         <section id={section.id} className="corporate-section relative overflow-hidden border-t border-white/10 px-6 py-24 sm:px-10 lg:px-16 lg:py-32">
@@ -82,7 +85,7 @@ function CorporateSection({ section, index }) {
             <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.85fr_1.15fr]">
                 <div>
                     <p className="mb-8 text-[10px] uppercase tracking-[0.45em] text-white/45">0{index + 1} / {section.eyebrow}</p>
-                    <h2 className="max-w-2xl text-4xl leading-tight text-white md:text-6xl">{section.title}</h2>
+                    <h2 className={headingSize}>{section.title}</h2>
                     {sectionImage && (
                         <div className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/30">
                             <Image src={sectionImage} alt={section.title} className="h-auto w-full object-cover" />
@@ -121,6 +124,9 @@ const SmoothScrollHero = ({ content }) => {
 
     const activeContent = content[locale];
     const labels = activeContent.labels;
+    const heroTitleSize = locale === "en"
+        ? "max-w-4xl text-4xl leading-none tracking-tight sm:text-6xl lg:text-[82px] xl:text-[92px]"
+        : "max-w-5xl text-5xl leading-none tracking-tight sm:text-7xl lg:text-[112px]";
 
     const firstFrames = useMemo(
         () => Array.from({ length: 18 }, (_, index) => frameSrc(index)),
@@ -287,6 +293,7 @@ const SmoothScrollHero = ({ content }) => {
                 <canvas ref={canvasRef} className="absolute inset-0 h-full w-full will-change-transform" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.58)_100%)]" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/78" />
+                <div className="pixel-meteor-layer" aria-hidden="true" />
 
                 <div className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none">
                     <div
@@ -301,7 +308,7 @@ const SmoothScrollHero = ({ content }) => {
                     <div className="grid w-full items-end gap-8 lg:grid-cols-[1fr_0.75fr]">
                         <div>
                             <p className="mb-6 text-[10px] uppercase tracking-[0.55em] text-white/55">{labels.heroKicker}</p>
-                            <h1 className="max-w-5xl text-5xl leading-none tracking-tight sm:text-7xl lg:text-[112px]">
+                            <h1 className={heroTitleSize}>
                                 {labels.heroTitle}
                             </h1>
                         </div>
