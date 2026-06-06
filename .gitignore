@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated video assets (built via ffmpeg during deployment)
+frames/*.mp4
+public/hero.mp4
