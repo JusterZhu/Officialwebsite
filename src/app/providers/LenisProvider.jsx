@@ -1,31 +1,55 @@
 "use client"
 
-import { useEffect } from "react"
-import Lenis from "lenis"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-
-gsap.registerPlugin(ScrollTrigger)
+import { useEffect, useRef } from "react"
 
 export default function LenisProvider({ children }) {
-    useEffect(() => {
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smoothWheel: true,
-            smoothTouch: false,
-        })
+    const stateRef = useRef({ rafId: null, lenis: null })
 
-        function raf(time) {
-            lenis.raf(time)
-            ScrollTrigger.update() // VERY IMPORTANT for GSAP
-            requestAnimationFrame(raf)
+    useEffect(() => {
+        let cancelled = false
+        const state = stateRef.current
+
+        const initLenis = async () => {
+            if (cancelled) return
+            const [LenisModule, GSAPModule] = await Promise.all([
+                import("lenis"),
+                import("gsap"),
+            ])
+            const Lenis = LenisModule.default
+            const gsap = GSAPModule.default
+            const { ScrollTrigger } = await import("gsap/ScrollTrigger")
+
+            if (cancelled) return
+            gsap.registerPlugin(ScrollTrigger)
+
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smoothWheel: true,
+                smoothTouch: false,
+            })
+            state.lenis = lenis
+
+            function raf(time) {
+                if (cancelled) return
+                lenis.raf(time)
+                ScrollTrigger.update()
+                state.rafId = requestAnimationFrame(raf)
+            }
+
+            state.rafId = requestAnimationFrame(raf)
         }
 
-        requestAnimationFrame(raf)
+        initLenis()
 
         return () => {
-            lenis.destroy()
+            cancelled = true
+            if (state.rafId) {
+                cancelAnimationFrame(state.rafId)
+            }
+            if (state.lenis) {
+                state.lenis.destroy()
+            }
         }
     }, [])
 

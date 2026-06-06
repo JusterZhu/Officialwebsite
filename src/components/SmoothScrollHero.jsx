@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown } from "lucide-react";
 
-import justerImage from "@/assets/images/juster.png";
-import spacestationImage from "@/assets/images/sapcestation.png";
-import bowlImage from "@/assets/images/bowl.png";
+import justerImage from "@/assets/images/juster.webp";
+import spacestationImage from "@/assets/images/sapcestation.webp";
+import bowlImage from "@/assets/images/bowl.webp";
 import FloatingButton from "./FloatingButton";
 import Navbar from "./Navbar";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const frameCount = 460;
-const frameSrc = (index) => `/frames/${String(index + 1).padStart(3, "0")}.png`;
+const FRAME_COUNT = 460;
+const FPS = 30;
+
 const sectionImages = {
     juster: justerImage,
     spacestation: spacestationImage,
@@ -112,15 +113,17 @@ function CorporateSection({ section, index }) {
 
 const SmoothScrollHero = ({ content }) => {
     const [locale, setLocale] = useState("en");
+    const [videoReady, setVideoReady] = useState(false);
     const canvasRef = useRef(null);
+    const videoRef = useRef(null);
     const animationScopeRef = useRef(null);
     const mainContainer = useRef(null);
     const heroCopyRef = useRef(null);
     const introRef = useRef(null);
     const logoRef = useRef(null);
-    const imageCache = useRef(new Map());
     const currentFrame = useRef({ value: 0 });
-    const drawFrameRef = useRef(() => { });
+    const lastDrawnFrame = useRef(-1);
+    const pendingSeek = useRef(false);
 
     const activeContent = content[locale];
     const labels = activeContent.labels;
@@ -128,25 +131,14 @@ const SmoothScrollHero = ({ content }) => {
         ? "max-w-4xl text-4xl leading-none tracking-tight sm:text-6xl lg:text-[82px] xl:text-[92px]"
         : "max-w-5xl text-5xl leading-none tracking-tight sm:text-7xl lg:text-[112px]";
 
-    const firstFrames = useMemo(
-        () => Array.from({ length: 18 }, (_, index) => frameSrc(index)),
-        [],
-    );
-
-    useEffect(() => {
-        firstFrames.forEach((src) => {
-            const image = new window.Image();
-            image.src = src;
-        });
-    }, [firstFrames]);
-
+    // Size canvas and draw initial frame once video is ready
     useEffect(() => {
         const canvas = canvasRef.current;
-        const context = canvas?.getContext("2d");
-        if (!canvas || !context) return;
+        const video = videoRef.current;
+        if (!canvas || !video) return;
 
+        const ctx = canvas.getContext("2d");
         let cancelled = false;
-        let currentRequest = 0;
 
         const sizeCanvas = () => {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -154,65 +146,65 @@ const SmoothScrollHero = ({ content }) => {
             canvas.height = window.innerHeight * dpr;
             canvas.style.width = `${window.innerWidth}px`;
             canvas.style.height = `${window.innerHeight}px`;
-            context.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         };
 
-        const drawImage = (image) => {
+        const drawVideoFrame = () => {
+            if (cancelled || video.readyState < 2) return;
+
             const width = window.innerWidth;
             const height = window.innerHeight;
-            const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
-            const x = (width - image.naturalWidth * scale) / 2;
-            const y = (height - image.naturalHeight * scale) / 2;
+            const scale = Math.max(width / video.videoWidth, height / video.videoHeight);
+            const x = (width - video.videoWidth * scale) / 2;
+            const y = (height - video.videoHeight * scale) / 2;
 
-            context.clearRect(0, 0, width, height);
-            context.drawImage(image, x, y, image.naturalWidth * scale, image.naturalHeight * scale);
+            ctx.clearRect(0, 0, width, height);
+            ctx.drawImage(video, x, y, video.videoWidth * scale, video.videoHeight * scale);
         };
 
-        const loadFrame = (index) => {
-            const normalized = Math.min(frameCount - 1, Math.max(0, Math.round(index)));
-            const cached = imageCache.current.get(normalized);
-
-            if (cached?.complete) {
-                drawImage(cached);
-                return;
-            }
-
-            const request = ++currentRequest;
-            const image = cached || new window.Image();
-            image.decoding = "async";
-            image.src = frameSrc(normalized);
-            imageCache.current.set(normalized, image);
-
-            image.onload = () => {
-                if (!cancelled && request === currentRequest) {
-                    drawImage(image);
-                }
-            };
-
-            for (let next = normalized + 1; next <= Math.min(frameCount - 1, normalized + 5); next += 1) {
-                if (!imageCache.current.has(next)) {
-                    const preload = new window.Image();
-                    preload.decoding = "async";
-                    preload.src = frameSrc(next);
-                    imageCache.current.set(next, preload);
-                }
-            }
+        const handleReady = () => {
+            if (cancelled) return;
+            setVideoReady(true);
+            sizeCanvas();
+            video.currentTime = 0;
+            pendingSeek.current = true;
         };
 
-        drawFrameRef.current = loadFrame;
-        sizeCanvas();
-        loadFrame(0);
+        const handleSeeked = () => {
+            if (cancelled) return;
+            pendingSeek.current = false;
+            drawVideoFrame();
+        };
 
+        const handleTimeUpdate = () => {
+            if (cancelled || pendingSeek.current) return;
+            drawVideoFrame();
+        };
+
+        video.addEventListener("loadeddata", handleReady);
+        video.addEventListener("seeked", handleSeeked);
+        video.addEventListener("timeupdate", handleTimeUpdate);
         window.addEventListener("resize", sizeCanvas);
+
+        // Kick off loading
+        if (video.readyState >= 2) {
+            handleReady();
+        }
 
         return () => {
             cancelled = true;
+            video.removeEventListener("loadeddata", handleReady);
+            video.removeEventListener("seeked", handleSeeked);
+            video.removeEventListener("timeupdate", handleTimeUpdate);
             window.removeEventListener("resize", sizeCanvas);
-            drawFrameRef.current = () => { };
         };
     }, []);
 
+    // GSAP scroll-driven animation
     useGSAP(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: mainContainer.current,
@@ -225,11 +217,24 @@ const SmoothScrollHero = ({ content }) => {
         });
 
         tl.to(currentFrame.current, {
-            value: frameCount - 1,
+            value: FRAME_COUNT - 1,
             snap: "value",
             ease: "none",
             duration: 10,
-            onUpdate: () => drawFrameRef.current(currentFrame.current.value),
+            onUpdate: () => {
+                const frame = Math.round(currentFrame.current.value);
+                if (frame === lastDrawnFrame.current) return;
+                lastDrawnFrame.current = frame;
+
+                if (video.readyState >= 2) {
+                    const targetTime = frame / FPS;
+                    // Only seek if the difference is significant
+                    if (Math.abs(video.currentTime - targetTime) > 0.01) {
+                        pendingSeek.current = true;
+                        video.currentTime = targetTime;
+                    }
+                }
+            },
         }, 0)
             .to(canvasRef.current, {
                 scale: 1.08,
@@ -280,17 +285,29 @@ const SmoothScrollHero = ({ content }) => {
             <Navbar navLinks={labels.nav} currentLocale={locale} onLocaleChange={setLocale} />
             <FloatingButton label={labels.inquiry} />
 
+            {/* Hidden video element for hardware-accelerated frame decoding */}
+            <video
+                ref={videoRef}
+                src="/hero.mp4"
+                preload="auto"
+                muted
+                playsInline
+                className="hidden"
+                aria-hidden="true"
+            />
+
             <div ref={mainContainer} className="relative h-screen overflow-hidden bg-black">
+                {/* Static fallback image shown until video is ready */}
                 <Image
-                    src={frameSrc(0)}
+                    src="/frames/001.webp"
                     alt=""
                     fill
-                    className="object-cover"
+                    className={`object-cover transition-opacity duration-300 ${videoReady ? "opacity-0" : "opacity-100"}`}
                     priority
                     unoptimized
                     aria-hidden="true"
                 />
-                <canvas ref={canvasRef} className="absolute inset-0 h-full w-full will-change-transform" />
+                <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.58)_100%)]" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/78" />
                 <div className="pixel-meteor-layer" aria-hidden="true">

@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated frame assets (built via scripts/compress-frames.mjs + ffmpeg)
+frames/*.webp
+frames/*.mp4
+public/hero.mp4

@@ -10,14 +10,20 @@ export const metadata = {
     shortcut: tslhLogo.src,
     apple: tslhLogo.src,
   },
+  other: {
+    "color-scheme": "dark",
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className="antialiased"
-      >
+      <head>
+          <link rel="preload" href="/hero.mp4" as="video" type="video/mp4" fetchPriority="high" />
+        </head>
+        <body
+          className="antialiased"
+        >
         <LenisProvider>
           {children}
         </LenisProvider>
