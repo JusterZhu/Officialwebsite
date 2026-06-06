@@ -40,7 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# generated frame assets (built via scripts/compress-frames.mjs + ffmpeg)
-frames/*.webp
+# generated video assets (built via ffmpeg during deployment)
 frames/*.mp4
 public/hero.mp4
