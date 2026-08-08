@@ -1,13 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import NavItem from "./NavbarItem";
 import Image from "next/image";
 import tslhLogo from "@/assets/images/tslhlogo.png";
 
+const SOURCE_PLATFORMS = [
+    { label: "GitHub", href: "https://github.com/GeneralLibrary/GeneralUpdate" },
+    { label: "Gitee", href: "https://gitee.com/GeneralLibrary/GeneralUpdate" },
+    { label: "GitCode", href: "https://gitcode.com/GeneralLibrary/GeneralUpdate" },
+];
+
 const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { } }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [sourceDropdownOpen, setSourceDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     // Prevent scrolling when sidebar is open
     useEffect(() => {
@@ -17,6 +25,19 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
             document.body.style.overflow = "unset";
         }
     }, [isOpen]);
+
+    // Close source dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setSourceDropdownOpen(false);
+            }
+        };
+        if (sourceDropdownOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [sourceDropdownOpen]);
 
     return (
         <>
@@ -38,6 +59,33 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
 
                 {/* Desktop Right - Hidden below LG */}
                 <div className="hidden lg:flex items-center gap-2 tracking-tight pointer-events-auto">
+                    {/* Source Platform Dropdown */}
+                    <div ref={dropdownRef} className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setSourceDropdownOpen(!sourceDropdownOpen)}
+                            className={`flex items-center gap-1 rounded-full border border-white/15 bg-black/20 px-3 py-1 text-white backdrop-blur-md transition hover:bg-white/10 ${sourceDropdownOpen ? "bg-white/10" : ""}`}
+                        >
+                            <span className="text-[10px]">{currentLocale === "zh" ? "源码平台" : "Source"}</span>
+                            <ChevronDown size={12} strokeWidth={1.5} className={`transition-transform duration-200 ${sourceDropdownOpen ? "rotate-180" : ""}`} />
+                        </button>
+                        {sourceDropdownOpen && (
+                            <div className="absolute right-0 top-full mt-2 min-w-[120px] overflow-hidden rounded-xl border border-white/10 bg-black/90 backdrop-blur-xl shadow-2xl shadow-black/50">
+                                {SOURCE_PLATFORMS.map((platform) => (
+                                    <a
+                                        key={platform.label}
+                                        href={platform.href}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        onClick={() => setSourceDropdownOpen(false)}
+                                        className="block px-4 py-2.5 text-[10px] text-white/70 transition hover:bg-white/10 hover:text-white"
+                                    >
+                                        {platform.label}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <div className="flex rounded-full border border-white/15 bg-black/20 p-1 text-white backdrop-blur-md">
                         {["en", "zh"].map((locale) => (
                             <button
@@ -105,20 +153,40 @@ const Navbar = ({ navLinks = [], currentLocale = "en", onLocaleChange = () => { 
                                 <NavItem text={link.text} href={link.href} />
                             </div>
                         ))}
-                        <div className="mt-8 flex rounded-full border border-white/15 p-1 text-xs text-white">
-                            {["en", "zh"].map((locale) => (
-                                <button
-                                    key={locale}
-                                    type="button"
-                                    onClick={() => {
-                                        onLocaleChange(locale);
-                                        setIsOpen(false);
-                                    }}
-                                    className={`rounded-full px-4 py-2 uppercase ${currentLocale === locale ? "bg-white text-black" : "text-white/60"}`}
-                                >
-                                    {locale === "en" ? "EN" : "中文"}
-                                </button>
-                            ))}
+                        <div className="mt-8 flex flex-col gap-3">
+                            {/* Mobile Source Platform Links */}
+                            <div className="border-t border-white/10 pt-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-white/40">{currentLocale === "zh" ? "源码平台" : "Source Platform"}</p>
+                                <div className="flex flex-col gap-1">
+                                    {SOURCE_PLATFORMS.map((platform) => (
+                                        <a
+                                            key={platform.label}
+                                            href={platform.href}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            onClick={() => setIsOpen(false)}
+                                            className="text-sm text-white/60 transition hover:text-white py-1"
+                                        >
+                                            {platform.label}
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="flex rounded-full border border-white/15 p-1 text-xs text-white">
+                                {["en", "zh"].map((locale) => (
+                                    <button
+                                        key={locale}
+                                        type="button"
+                                        onClick={() => {
+                                            onLocaleChange(locale);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`rounded-full px-4 py-2 uppercase ${currentLocale === locale ? "bg-white text-black" : "text-white/60"}`}
+                                    >
+                                        {locale === "en" ? "EN" : "中文"}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

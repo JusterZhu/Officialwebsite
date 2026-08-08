@@ -6,6 +6,7 @@ const sectionOrder = [
   "core-business",
   "product-showcase",
   "case-showcase",
+  "releases",
   "contact",
 ];
 
@@ -26,6 +27,7 @@ const labels = {
       ["Business", "#core-business"],
       ["Products", "#product-showcase"],
       ["Cases", "#case-showcase"],
+      ["Releases", "#releases"],
       ["Contact", "#contact"],
     ],
   },
@@ -44,6 +46,7 @@ const labels = {
       ["核心业务", "#core-business"],
       ["产品中心", "#product-showcase"],
       ["案例展示", "#case-showcase"],
+      ["发布日志", "#releases"],
       ["联系我们", "#contact"],
     ],
   },
